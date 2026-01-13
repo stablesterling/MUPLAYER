@@ -4,10 +4,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
-# --- CRITICAL CHANGE HERE ---
-# Setting template_folder to "." tells Flask to look in the root directory
-app = Flask(__name__, template_folder=".") 
-app.config['SECRET_KEY'] = 'orbitron-protocol-secure-88'
+# Look for index.html in the root folder instead of /templates
+app = Flask(__name__, template_folder=".")
+app.config['SECRET_KEY'] = 'orbitron-core-access-99'
 
 # Database Configuration
 uri = os.getenv("DATABASE_URL", "sqlite:///orbitron.db")
@@ -49,10 +48,9 @@ def register():
     username = request.form.get('username')
     password = request.form.get('password')
     if User.query.filter_by(username=username).first():
-        flash('Identity Taken.')
-        return redirect(url_for('index'))
+        return redirect(url_for('index')) # Username exists
     
-    hashed_pw = generate_password_hash(password, method='pbkdf2:sha256')
+    hashed_pw = generate_password_hash(password)
     new_user = User(username=username, password=hashed_pw)
     db.session.add(new_user)
     db.session.commit()
@@ -86,4 +84,3 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=True)
-  
