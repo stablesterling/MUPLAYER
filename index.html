@@ -1,213 +1,87 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ORBITRON // PROTOCOL</title>
+    <title>ORBITRON // CORE</title>
     <style>
-        :root {
-            --neon: #00f2ff;
-            --bg: #01080b;
-            --panel-bg: rgba(0, 15, 20, 0.9);
-            --glow: 0 0 15px rgba(0, 242, 255, 0.4);
-        }
-
-        body {
-            background: var(--bg);
-            color: var(--neon);
-            font-family: 'Courier New', monospace;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* --- AUTH SCREEN STYLES --- */
-        #auth-container {
-            border: 2px solid var(--neon);
-            padding: 40px;
-            box-shadow: var(--glow);
-            text-align: center;
-            background: var(--panel-bg);
-            width: 350px;
-        }
-
-        .auth-input {
-            display: block;
-            width: 100%;
-            margin: 15px 0;
-            background: transparent;
-            border: 1px solid var(--neon);
-            color: white;
-            padding: 12px;
-            box-sizing: border-box;
-            outline: none;
-        }
-
-        /* --- DASHBOARD STYLES (MATCHING PHOTO) --- */
-        #dashboard-container {
-            display: none; /* Hidden by default until login */
-            border: 2px solid var(--neon);
-            width: 90%;
-            max-width: 1000px;
-            padding: 20px;
-            box-shadow: var(--glow);
-            background: var(--panel-bg);
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--neon);
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-        }
-
-        .grid-layout {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-        }
-
-        .panel {
-            border: 1px solid var(--neon);
-            padding: 15px;
-            position: relative;
-        }
-
-        .panel-title {
-            background: var(--neon);
-            color: #000;
-            display: inline-block;
-            padding: 2px 10px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-        }
-
-        .song-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px;
-            border-bottom: 1px solid rgba(0, 242, 255, 0.2);
-            align-items: center;
-        }
-
-        .btn {
-            background: var(--neon);
-            color: #000;
-            border: none;
-            padding: 8px 15px;
-            cursor: pointer;
-            font-weight: bold;
-            text-transform: uppercase;
-            transition: 0.3s;
-        }
-
-        .btn:hover {
-            box-shadow: var(--glow);
-            filter: brightness(1.2);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--neon);
-            color: var(--neon);
-        }
-
-        .hidden { display: none; }
+        :root { --neon: #00f2ff; --bg: #01080b; }
+        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        
+        /* Auth Styles */
+        #auth-box { border: 2px solid var(--neon); padding: 40px; box-shadow: 0 0 20px rgba(0,242,255,0.4); text-align: center; background: rgba(0,15,20,0.9); width: 350px; }
+        input { display: block; width: 100%; margin: 15px 0; background: transparent; border: 1px solid var(--neon); color: white; padding: 10px; box-sizing: border-box; outline: none; }
+        .btn { width: 100%; background: var(--neon); color: black; border: none; padding: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        
+        /* Dashboard Styles */
+        #dashboard { display: none; width: 900px; border: 2px solid var(--neon); padding: 20px; box-shadow: 0 0 20px rgba(0,242,255,0.4); background: rgba(0,15,20,0.9); }
+        .header { display: flex; justify-content: space-between; border-bottom: 2px solid var(--neon); margin-bottom: 20px; padding-bottom: 10px; }
+        .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        .panel { border: 1px solid var(--neon); padding: 15px; }
+        .song-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid rgba(0,242,255,0.2); }
     </style>
 </head>
 <body>
 
-    <div id="auth-container">
+    <div id="auth-box">
         <h1 id="auth-title">ORBITRON_AUTH</h1>
-        <form action="/login" method="POST" id="auth-form">
-            <input type="text" name="username" class="auth-input" placeholder="USER_IDENTIFIER" required>
-            <input type="password" name="password" class="auth-input" placeholder="ACCESS_KEY" required>
-            <button type="submit" class="btn" style="width: 100%;">INITIALIZE ACCESS</button>
+        <form id="auth-form" method="POST" action="/login">
+            <input type="text" name="username" placeholder="IDENTIFIER" required>
+            <input type="password" name="password" placeholder="ACCESS_KEY" required>
+            <button type="submit" class="btn">INITIALIZE</button>
         </form>
-        <p style="font-size: 0.8rem; margin-top: 20px;">
-            <a href="#" onclick="toggleAuth()" id="toggle-link" style="color: var(--neon);">NEW USER? REGISTER_IDENTITY</a>
+        <p style="font-size: 0.8rem; margin-top: 15px;">
+            <a href="#" onclick="toggleAuth()" id="auth-toggle" style="color: var(--neon);">NEW USER? REGISTER</a>
         </p>
     </div>
 
-    <div id="dashboard-container">
+    <div id="dashboard">
         <div class="header">
-            <h1 style="margin:0;">ORBITRON <span style="font-size: 0.5em; opacity: 0.7;">CORE_v2.0</span></h1>
-            <div>
-                <span id="user-display">USER: {{ name }}</span>
-                <a href="/logout" class="btn-outline" style="padding: 5px; text-decoration: none; margin-left: 15px;">DISCONNECT</a>
-            </div>
+            <h1>ORBITRON <span style="font-size: 0.5em;">USER: {{ current_user.username }}</span></h1>
+            <a href="/logout" style="color: red; text-decoration: none;">[DISCONNECT]</a>
         </div>
-
-        <div class="grid-layout">
+        <div class="grid">
             <div class="panel">
-                <div class="panel-title">Playlist Interface</div>
-                
-                <form action="/add_song" method="POST" style="margin-bottom: 20px; display: flex; gap: 10px;">
-                    <input type="text" name="song_name" class="auth-input" style="margin: 0; flex-grow: 1;" placeholder="ENTER TRACK NAME...">
-                    <button type="submit" class="btn">ADD_CORE</button>
+                <h3>PLAYLIST_INTERFACE</h3>
+                <form action="/add_song" method="POST" style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <input type="text" name="song_name" placeholder="TRACK NAME..." style="margin: 0;">
+                    <button type="submit" class="btn" style="width: auto;">ADD</button>
                 </form>
-
-                <div id="playlist-items">
+                <div id="songs">
                     {% for song in songs %}
-                    <div class="song-row">
-                        <span>[ACTIVE] {{ song.song_name }}</span>
-                        <button class="btn" style="font-size: 0.7rem;">PLAY_STREAM</button>
+                    <div class="song-item">
+                        <span>> {{ song.song_name }}</span>
+                        <button class="btn" style="width: auto; font-size: 0.7rem; padding: 2px 10px;">PLAY</button>
                     </div>
-                    {% else %}
-                    <p style="opacity: 0.5;">NO TRACKS FOUND IN DATABASE...</p>
                     {% endfor %}
                 </div>
             </div>
-
             <div class="panel">
-                <div class="panel-title">System Status</div>
-                <p>CONNECTION: STABLE</p>
-                <p>SIGNAL: |||||||||| 100%</p>
-                <p>ENCRYPTION: AES-256</p>
-                <hr style="border: 0.5px solid var(--neon); opacity: 0.3;">
-                <p>CORE_TEMP: 32°C</p>
+                <h3>SYSTEM_STATS</h3>
+                <p>DATABASE: CONNECTED</p>
+                <p>SIGNAL: |||||||| 80%</p>
+                <p>TEMP: 34°C</p>
             </div>
         </div>
     </div>
 
-  <script>
-    // 1. Toggle between Login and Register
-    let isLogin = true;
-    function toggleAuth() {
-        const form = document.getElementById('auth-form');
-        const title = document.getElementById('auth-title');
-        const link = document.getElementById('toggle-link');
-        
-        if (isLogin) {
-            form.action = '/register';
-            title.innerText = 'REGISTER_IDENTITY';
-            link.innerText = 'ALREADY REGISTERED? LOGIN';
-        } else {
-            form.action = '/login';
-            title.innerText = 'ORBITRON_AUTH';
-            link.innerText = 'NEW USER? REGISTER_IDENTITY';
+    <script>
+        // Toggle Logic
+        let isLogin = true;
+        function toggleAuth() {
+            const form = document.getElementById('auth-form');
+            const title = document.getElementById('auth-title');
+            const link = document.getElementById('auth-toggle');
+            isLogin = !isLogin;
+            form.action = isLogin ? '/login' : '/register';
+            title.innerText = isLogin ? 'ORBITRON_AUTH' : 'REGISTER_IDENTITY';
+            link.innerText = isLogin ? 'NEW USER? REGISTER' : 'EXISTING USER? LOGIN';
         }
-        isLogin = !isLogin;
-    }
 
-    // 2. The Logic to show/hide the dashboard
-    // We use a string comparison to avoid JavaScript "unexpected token" errors
-    const authStatus = "{{ 'true' if current_user.is_authenticated else 'false' }}";
-
-    if (authStatus === 'true') {
-        document.getElementById('auth-container').style.display = 'none';
-        document.getElementById('dashboard-container').style.display = 'block';
-        document.body.style.alignItems = 'flex-start'; // Adjust layout for dashboard
-    } else {
-        document.getElementById('auth-container').style.display = 'block';
-        document.getElementById('dashboard-container').style.display = 'none';
-    }
-</script>
+        // Authentication Check
+        const loggedIn = "{{ 'true' if current_user.is_authenticated else 'false' }}";
+        if (loggedIn === "true") {
+            document.getElementById('auth-box').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+        }
+    </script>
 </body>
 </html>
